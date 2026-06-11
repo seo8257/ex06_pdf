@@ -1,10 +1,6 @@
-langchain-community
-langchain-text-splitters
-langchain-openai 
-langchain-chroma
 streamlit
-load_dotenv
-langchain_classic
-langchain_core
-tiktoken
-
+langchain-core
+langchain-classic
+langchain-text-splitters
+langchain-openai
+pypdf
