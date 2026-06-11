@@ -79,9 +79,9 @@ if uploaded_file is not None:
     embeddings = OpenAIEmbeddings(  api_key=openai_key   )
 
     db = InMemoryVectorStore.from_documents(
-    documents=texts,
-    embedding=embeddings
-)
+        documents=texts,
+        embedding=embeddings
+    )
 
     retriever = db.as_retriever(
         search_kwargs={
