@@ -78,10 +78,10 @@ if uploaded_file is not None:
 
     embeddings = OpenAIEmbeddings(  api_key=openai_key   )
 
-    db = Chroma.from_documents(
-        documents=texts,
-        embedding=embeddings
-    )
+    db = InMemoryVectorStore.from_documents(
+    documents=texts,
+    embedding=embeddings
+)
 
     retriever = db.as_retriever(
         search_kwargs={
