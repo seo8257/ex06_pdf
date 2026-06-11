@@ -9,7 +9,8 @@ import tempfile
 import streamlit as st
 
 # PDF Loader
-from langchain_community.document_loaders import PyPDFLoader
+from pypdf import PdfReader
+from langchain_core.documents import Document
 
 # 문서 Splitter
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -42,8 +43,22 @@ def pdf_to_document(uploaded_file):
     with open(   temp_filepath,    "wb"   ) as f:
         f.write(  uploaded_file.getvalue()   )
 
-    loader = PyPDFLoader(    temp_filepath   )
-    pages = loader.load()
+    reader = PdfReader(temp_filepath)    
+
+    pages = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        text = page.extract_text() or ""
+
+        if text.strip():
+            pages.append(
+                Document(
+                    page_content=text,
+                    metadata={
+                        "source": uploaded_file.name,
+                        "page": page_number
+                    }
+                )
+            )
     return pages
 
 if uploaded_file is not None:
