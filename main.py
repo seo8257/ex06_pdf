@@ -23,21 +23,29 @@ uploaded_file = st.file_uploader(   "PDF 파일을 올려주세요",   type=["pd
 st.write("----------------")
 
 def pdf_to_document(uploaded_file):
-    """    Streamlit 업로드 PDF를
-    LangChain Document 형태로 변환
-    """
-    # 임시 폴더 생성
     temp_dir = tempfile.TemporaryDirectory()
+    temp_filepath = os.path.join(temp_dir.name, uploaded_file.name)
 
-    # 임시 PDF 파일
-    temp_filepath = os.path.join(     temp_dir.name,    uploaded_file.name    )
+    with open(temp_filepath, "wb") as f:
+        f.write(uploaded_file.getvalue())
 
-    with open(   temp_filepath,    "wb"  ) as f:
-        f.write(    uploaded_file.getvalue()    )
+    reader = PdfReader(temp_filepath)
 
-    loader = PyPDFLoader(   temp_filepath   )
+    pages = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        text = page.extract_text() or ""
 
-    pages = loader.load()
+        if text.strip():
+            pages.append(
+                Document(
+                    page_content=text,
+                    metadata={
+                        "source": uploaded_file.name,
+                        "page": page_number,
+                    },
+                )
+            )
+
     return pages
 
 class StreamHandler(  BaseCallbackHandler ):
